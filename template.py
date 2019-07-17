@@ -13,13 +13,13 @@ sa = lambda p, a,b : p.sendafter(a,b)
 sla = lambda p, a,b : p.sendlineafter(a,b)
 
 # amd64 or x86
-context(arch = 'amd64', os = 'linux', endian = 'little')
+context(arch = 'ARCH', os = 'linux', endian = 'little')
 context.log_level = 'debug'
 context.terminal = ['tmux', 'splitw', '-h']
 
-filename = "babyheap"
-ip = "chall.pwnable.tw"
-port = 10104
+filename = "FILENAME"
+ip = "HOST"
+port = PORT
 
 # LOCAL = False
 LOCAL = 1 if len(sys.argv)==1 else 0
