@@ -3,8 +3,12 @@ from sys import exit
 import logging as log
 
 # log = logging.getLogger()
-# assume has add, delete and show methods
-# read add have off-by-one vuln
+
+'''
+assume has add, delete and show methods
+read add have off-by-one vuln
+'''
+
 class OffByOne(object):
     """
     arch = amd64

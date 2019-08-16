@@ -131,9 +131,6 @@ def house_of_orange():
     return:
         simple payload template
     '''
-    # if context.arch == 'amd64':
-    #     pass
-    # elif context.arch == 
     payload='''
 offsets = pf.iofile.get_offsets(path_to_libc)
 fake_file = fit({
