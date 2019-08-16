@@ -120,7 +120,7 @@ class OffByOne(object):
 
 def test():
     obo = OffByOne()
-    obo.set_add([0x40, 0x40], [0x20, 0x110], 1)
+    obo.set_add([], [0x20, 0x100], 1)
     exp = obo.get_exp()
     obo.show_ops()
     

@@ -21,51 +21,50 @@ filename = "FILENAME"
 ip = "HOST"
 port = PORT
 
-# LOCAL = False
 LOCAL = 1 if len(sys.argv)==1 else 0
 
 
 break_points = []
 
 def _get_bstr():
-  b_str =""
-  for break_point in break_points:
-          b_str += "b *" + hex(break_point ) + '\n'
-  return b_str
+    b_str =""
+    for break_point in break_points:
+            b_str += "b *" + hex(break_point ) + '\n'
+    return b_str
 
 elf = ELF("./"+filename)
 
 if LOCAL:
-  io = process("./"+filename)
-  libc = elf.libc
+    io = process("./"+filename)
+    libc = elf.libc
 
-  # # if LD_PRELOAD multiple libs, split with ':'
-  # io = process("./" + filename, env={'LD_PRELOAD': "./libc.so"}) 
-  # libc = ELF("./libc.so")
+    # # if LD_PRELOAD multiple libs, split with ':'
+    # io = process("./" + filename, env={'LD_PRELOAD': "./libc.so"}) 
+    # libc = ELF("./libc.so")
 else:
-  context.log_level = 'debug'
-  io = remote(ip, port)
-  libc = ELF("./libc.so")
+    context.log_level = 'debug'
+    io = remote(ip, port)
+    libc = ELF("./libc.so")
 
 def wait(t=0.3):
     sleep(t)
 
 def mydebug(s=''):
-  if not LOCAL:
-    return
-  gdb.attach(io, _get_bstr()+s)
+    if not LOCAL:
+        return
+    gdb.attach(io, _get_bstr()+s)
 
 def pause(s = 'pause'):
-  if not LOCAL:
-    return
-  print('pid: ' + str(io.pid))
-  raw_input(s)
+    if not LOCAL:
+        return
+    print('pid: ' + str(io.pid))
+    raw_input(s)
 
 def sh(p):
-  p.interactive()
+    p.interactive()   
 
 def lg(name, val):
-  log.info(name+" : "+hex(val))
+    log.info(name+" : "+hex(val))
 
 
 pause()
@@ -99,6 +98,11 @@ pause()
 # <realloc+13>    mov    rbx, rdi
 # <realloc+16>    sub    rsp, 0x38
 
+'''
+use stdout to leak libc address
+stdout's address p & *(struct _IO_FILE_plus *) stdout
+then modify write_ptr
+'''
 
 
 ''' off by one

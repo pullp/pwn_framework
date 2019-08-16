@@ -9,6 +9,8 @@
 #include <malloc.h>
 
 int main(){
+	char buf[0x10];
+	read(0, buf, 10);
 	free(0);
 	void *p1 = malloc(0x10);
 	int a = malloc_usable_size(p1);
