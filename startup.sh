@@ -81,11 +81,11 @@ r2pipe \
 scapy \
 python-constraint
 
-# virtualenvwrapper
-pip install virtualenvwrapper -i https://pypi.douban.com/simple/
-source /usr/local/bin/virtualenvwrapper.sh
-echo "source /usr/local/bin/virtualenvwrapper.sh" >> .bashrc
-echo "source /usr/local/bin/virtualenvwrapper.sh" >> .zshrc
+# # virtualenvwrapper
+# pip install virtualenvwrapper -i https://pypi.douban.com/simple/
+# source /usr/local/bin/virtualenvwrapper.sh
+# echo "source /usr/local/bin/virtualenvwrapper.sh" >> .bashrc
+# echo "source /usr/local/bin/virtualenvwrapper.sh" >> .zshrc
 
 
 # bash -c 'source /etc/bash_completion.d/virtualenvwrapper && \
@@ -136,8 +136,8 @@ echo "[[ -s /home/pu1p/.autojump/etc/profile.d/autojump.sh ]] && source /home/pu
 # disable ASLR
 bash -c 'echo "kernel.randomize_va_space = 0" > /etc/sysctl.d/01-disable-aslr.conf'
 
-# install libc sourc for gdb
-apt-get install glibc-source && \
-cd /usr/src/glibc && \
-tar xvf ./glibc-2.23.tar.xz
-bash -c 'echo "dir /usr/src/glibc/glibc-2.23/malloc" >> ~/.gdbinit'
+# # install libc sourc for gdb
+# apt-get install glibc-source && \
+# cd /usr/src/glibc && \
+# tar xvf ./glibc-2.23.tar.xz
+# bash -c 'echo "dir /usr/src/glibc/glibc-2.23/malloc" >> ~/.gdbinit'
