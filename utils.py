@@ -2,6 +2,7 @@
 import pwn
 import os
 import sys
+import shutil
 
 
 """
@@ -25,7 +26,7 @@ def change_ld(binary, version, copy=True):
             print("version not exist")
             return -1
     else:
-        ld = "ld_%s.so"%(version)
+        ld = version
     if not os.access(ld, os.R_OK): 
         pwn.log.failure("Invalid path {} to ld".format(ld))
         return None
@@ -70,3 +71,7 @@ def template(filename, host="", port=0):
 
     with open("exp.py", "w") as f2:
         f2.write(tp)
+
+def test():
+    shutil.copy("/mnt/hgfs/codes/pwn/pwn_framework/test.c", "./test.c")
+    shutil.copy("/mnt/hgfs/codes/pwn/pwn_framework/Makefile", "./Makefile")
