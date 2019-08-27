@@ -35,17 +35,18 @@ def _get_bstr():
 
 elf = ELF("./"+filename)
 
+remote_libc = "./remote_libc.so"
 if LOCAL:
     io = process("./"+filename)
     libc = elf.libc
 
     # # if LD_PRELOAD multiple libs, split with ':'
-    # io = process("./" + filename, env={'LD_PRELOAD': "./libc.so"}) 
-    # libc = ELF("./libc.so")
+    # io = process("./" + filename, env={'LD_PRELOAD': remote_libc}) 
+    # libc = ELF(remote_libc)
 else:
     context.log_level = 'debug'
     io = remote(ip, port)
-    libc = ELF("./libc.so")
+    libc = ELF(remote_libc)
 
 def wait(t=0.3):
     sleep(t)

