@@ -128,7 +128,7 @@ def test():
     exp = obo.get_exp()
     obo.show_ops()
     
-test()
+# test()
 
 
 
