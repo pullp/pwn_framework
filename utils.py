@@ -3,6 +3,7 @@ import pwn
 import os
 import sys
 import shutil
+import re
 
 
 """
@@ -75,3 +76,87 @@ def template(filename, host="", port=0):
 def test():
     shutil.copy("/mnt/hgfs/codes/pwn/pwn_framework/test.c", "./test.c")
     shutil.copy("/mnt/hgfs/codes/pwn/pwn_framework/Makefile", "./Makefile")
+
+def publish(exp="./exp.py", out="./public_exp.py"):
+    lines = open(exp, "r").readlines()
+    lines.reverse()
+    s1 = ""
+    while True:
+        try:
+            line = lines.pop()
+            if "pwn_framework" in line:
+                continue
+            if "lambda p" in line:
+                continue
+            if "context" in line:
+                continue
+            # if "global io" in line:
+            #     continue
+            if "LOCAL = 1" in line:
+                continue
+            if "break_points" in line:
+                continue
+            if "def _get_bstr" in line:
+                while lines.pop().startswith("  "):
+                    continue
+                s1 += "\n"
+                continue
+            if "def wait" in line:
+                while lines.pop().startswith("  "):
+                    continue
+                s1 += "\n"
+                continue
+            if "def mydebug" in line:
+                while lines.pop().startswith("  "):
+                    continue
+                s1 += "\n"
+                continue
+            if "def pause" in line:
+                while lines.pop().startswith("  "):
+                    continue
+                s1 += "\n"
+                continue
+            if "def sh" in line:
+                while lines.pop().startswith("  "):
+                    continue
+                s1 += "\n"
+                continue
+            if "wait(" in line:
+                second = re.findall(r"\d+\.?\d*", line)[0]
+                s1 += line[:line.find("wait(")]+"time.sleep(%s)\n"%(second)
+                continue
+            if "_get_bstr(" in line or  "pause(" in line \
+                or "mydebug(" in line or "sh(" in line:
+                continue
+
+            if "if LOCAL:" in line:
+                s1 += "# local\n"
+                while True:
+                    line = lines.pop()
+                    if line.strip() == "":
+                        continue
+                    if line.startswith("  "):
+                        s1 += "# "+line.strip()+"\n"
+                    elif line.startswith("else:"):
+                        s1 += "# remote\n"
+                    else:
+                        # s1 += "\n"+line
+                        print("append line:"+line)
+                        lines.append(line)
+                        break
+                continue
+            if line.strip(" ").startswith("#"):
+                continue
+            s1 += line
+        except IndexError as e:
+            break
+    s2 = s1.replace("ru(", "io.recvuntil(")\
+            .replace("rv(", "io.recv(")\
+            .replace("rl(", "io.recvline(")\
+            .replace("sn(", "io.send(")\
+            .replace("sa(", "io.sendafter(")\
+            .replace("sla(", "io.sendlineafter(")\
+            .replace("sl(", "io.sendline(")\
+            .replace("(p,", "(")\
+            .replace("(io,", "(")
+    open(out, "w").write(s2)
