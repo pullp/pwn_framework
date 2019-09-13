@@ -130,8 +130,8 @@ gem install one_gadget
 git clone git://github.com/wting/autojump.git && \
 cd autojump && \
 ./install.py
-echo "[[ -s /home/pu1p/.autojump/etc/profile.d/autojump.sh ]] && source /home/pu1p/.autojump/etc/profile.d/autojump.sh" >> ~/.zshrc
-echo "[[ -s /home/pu1p/.autojump/etc/profile.d/autojump.sh ]] && source /home/pu1p/.autojump/etc/profile.d/autojump.sh" >> ~/.bashrc
+echo "[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh" >> ~/.zshrc
+echo "[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh" >> ~/.bashrc
 
 # disable ASLR
 bash -c 'echo "kernel.randomize_va_space = 0" > /etc/sysctl.d/01-disable-aslr.conf'
