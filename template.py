@@ -24,14 +24,9 @@ port = PORT
 
 LOCAL = 1 if len(sys.argv)==1 else 0
 
-
+global break_points
 break_points = []
 
-def _get_bstr():
-    b_str =""
-    for break_point in break_points:
-            b_str += "b *" + hex(break_point ) + '\n'
-    return b_str
 
 elf = ELF("./"+filename)
 
@@ -52,13 +47,24 @@ def wait(t=0.3):
     sleep(t)
 
 def mydebug(s=''):
+    def _get_bstr():
+        global break_points
+        b_str =""
+        for break_point in break_points:
+                if type(break_point) == int:
+                    b_str += "b *" + hex(break_point ) + '\n'
+                elif type(break_point) == str:
+                    b_str += "b * %s\n"%(break_point)
+                else:
+                    pause("unsupported break point type : "+str(break_point))
+        return b_str
     if not LOCAL:
         return
     gdb.attach(io, _get_bstr()+s)
 
 def pause(s = 'pause'):
     if not LOCAL:
-        return
+        raw_input(s)
     print('pid: ' + str(io.pid))
     raw_input(s)
 
