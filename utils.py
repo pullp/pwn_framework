@@ -160,3 +160,9 @@ def publish(exp="./exp.py", out="./public_exp.py"):
             .replace("(p,", "(")\
             .replace("(io,", "(")
     open(out, "w").write(s2)
+
+def disable_aslr():
+    """
+    refer to https://askubuntu.com/questions/318315/how-can-i-temporarily-disable-aslr-address-space-layout-randomization
+    """
+    print("echo 0 | sudo tee /proc/sys/kernel/randomize_va_space")
