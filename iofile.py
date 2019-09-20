@@ -1,7 +1,8 @@
 #coding:utf-8
-import pwn
+import os
 import json
 import shutil
+import pwn
 
 def get_offsets(path_to_libc):
     '''
@@ -88,21 +89,21 @@ def get_offsets(path_to_libc):
     
     def _get_file_off(mem):
         tmp = 'gdb -batch -q --nx \
-            -ex "file ./%s" \
+            -ex "file %s" \
             -ex "p (char *)&((struct _IO_FILE_plus *)stdout)->%s - (char *)stdout"'%(path_to_libc, mem)
-        # print(tmp)
+        print(tmp)
         res = os.popen(tmp).read()
-        # print(res)
+        print(res)
         return int(res.strip("\n").split('=')[-1])
 
     def _get_vtable_off(mem):
         tmp = 'gdb -batch -q --nx \
-            -ex "file ./%s" \
+            -ex "file %s" \
             -ex "p (char *)&((struct _IO_jump_t *)stdout)->%s - (char *)stdout"'%(path_to_libc, mem)
         # stdout is just a valid symbol, any other valid symbols are also welcome
-        # print(tmp)
+        print(tmp)
         res = os.popen(tmp).read()
-        # print(res)
+        print(res)
         return int(res.strip("\n").split('=')[-1])
 
     for mem in file:
@@ -123,7 +124,7 @@ def house_of_orange():
 
     PRICIPLE:
     IF (fp->_mode <= 0 && fp->_IO_write_ptr > fp->_IO_write_base) SATISFIED THEN 
-    fp->vtable->__overflow(fp) WILL BE CALLED WHEN PARAGRAME EXIT
+    fp->vtable->__overflow(fp) WILL BE CALLED WHEN PROGRAM EXIT
 
     call trace:
         malloc_printerr => __libc_message => abort => fflush / _IO_flush_all_lockp => _IO_OVERFLOW
