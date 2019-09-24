@@ -180,6 +180,12 @@ def leak_libc():
         3. Set _ﬂag  |= _IO_CURRENTLY_PUTTING( |= 0x800 )
         4. Set the write_base & write_ptr to memory address which you want to read
         5. _IO_read_end equal to _IO_write_base
+
+    BTW, sometimes another way also works:
+        1. set _flag to  0xfbad1800
+        2. overwrite the low byte of write_base to \x00
+        3. then send a \n
+    this method is really useful when tcache is unavailable
     '''
     # todo
     payload = '''offsets = pf.iofile.get_offsets(path_to_libc)
