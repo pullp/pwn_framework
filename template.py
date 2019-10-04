@@ -24,8 +24,8 @@ port = PORT
 
 LOCAL = 1 if len(sys.argv)==1 else 0
 
-global break_points
-break_points = []
+global bps # break points
+bps = []
 
 
 elf = ELF("./"+filename)
@@ -48,9 +48,9 @@ def wait(t=0.3):
 
 def mydebug(s=''):
     def _get_bstr():
-        global break_points
+        global bps
         b_str =""
-        for break_point in break_points:
+        for break_point in bps:
                 if type(break_point) == int:
                     b_str += "b *" + hex(break_point ) + '\n'
                 elif type(break_point) == str:
@@ -63,10 +63,11 @@ def mydebug(s=''):
     gdb.attach(io, _get_bstr()+s)
 
 def pause(s = 'pause'):
-    if not LOCAL:
+    if LOCAL:
+        print('pid: ' + str(io.pid))
         raw_input(s)
-    print('pid: ' + str(io.pid))
-    raw_input(s)
+    else:
+        raw_input(s)
 
 def sh(p):
     p.interactive()   
