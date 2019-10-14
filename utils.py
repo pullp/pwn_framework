@@ -10,9 +10,16 @@ import re
 Force to use assigned new ld.so by changing the binary
 """
 def change_ld(binary, version, copy=True):
+    if os.path.exists("/home/pu1p/glibcs"):
+        GLIBCS_PATH = "/home/pu1p/glibcs"
+    elif os.path.exists("/var/glibcs"):
+        GLIBCS_PATH = "/var/glibcs"
+    else:
+        print("unknown glibc path")
+        return
     def _cp_ld_libc(_version):
-        ld_path = "/home/pu1p/glibcs/ld_and_libcs_x64/ld_%s.so"%(_version)
-        libc_path = "/home/pu1p/glibcs/ld_and_libcs_x64/libc_%s.so"%(_version)
+        ld_path = "%s/ld_and_libcs_x64/ld_%s.so"%(GLIBCS_PATH, _version)
+        libc_path = "%s/ld_and_libcs_x64/libc_%s.so"%(GLIBCS_PATH, _version)
         print(ld_path)
         print(libc_path)
         if not os.path.exists(ld_path):

@@ -6,7 +6,13 @@
 ### add to python path
 
 ```bash
-export PYTHONPATH=path/to/this/dir
+export PYTHONPATH=path/to/this/parent/dir
+```
+
+example:
+
+```bash
+export PYTHONPATH="/mnt/hgfs/codes/pwn"
 ```
 
 ### generate exp template
