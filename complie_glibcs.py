@@ -6,7 +6,12 @@ global GLIBCS_PATH
 GLIBCS_PATH = "/var/glibcs"
 
 
+
 def compile(version):
+    """
+    download glibcs from http://ftp.gnu.org/gnu/libc/ or https://mirrors.tuna.tsinghua.edu.cn/gnu/glibc/
+    recommended path is /var/glibs/ remember to chmod -R
+    """
     global GLIBCS_PATH
     os.chdir(GLIBCS_PATH)
     os.system("tar zxvf ./glibc-%s.tar.gz"%(version))
@@ -16,8 +21,8 @@ def compile(version):
     os.system("../glibc-%s/configure '--prefix=%s/glibc-%s_out'"%(version, GLIBCS_PATH, version))
     os.system("make && make install")
     os.chdir("../glibc-%s_out/lib"%(version))
-    shutil.copy("./libc-%s.so", "../ld_and_libcs_x64/libc_%s.so"%(version, version))
-    shutil.copy("./elf/ld-%s.so", "../ld_and_libcs_x64/ld_%s.so"%(version, version))
+    shutil.copy("./libc-%s.so"%(version), "../ld_and_libcs_x64/libc_%s.so"%(version))
+    shutil.copy("./elf/ld-%s.so"%(version), "../ld_and_libcs_x64/ld_%s.so"%(version))
 
 
 if __name__ == "__main__":

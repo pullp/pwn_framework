@@ -30,7 +30,7 @@ bps = []
 
 elf = ELF("./"+filename)
 
-remote_libc = "./remote_libc.so"
+remote_libc = "./remote_libc"
 if LOCAL:
     io = process("./"+filename)
     libc = elf.libc
