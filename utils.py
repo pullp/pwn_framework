@@ -5,6 +5,8 @@ import sys
 import shutil
 import re
 
+import readable_args
+
 
 """
 Force to use assigned new ld.so by changing the binary
