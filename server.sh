@@ -6,13 +6,10 @@ apt-get update && apt-get -y upgrade
 apt-get install -y \
 sudo \
 build-essential \
-gcc-multilib \
-g++-multilib \
 python-dev \
 python-pip \
 python3-pip \
 ipython \
-default-jdk \
 net-tools \
 nasm \
 vim \
@@ -21,7 +18,6 @@ git \
 autoconf \
 socat \
 netcat \
-nmap \
 wget \
 tcpdump \
 libimage-exiftool-perl \
@@ -30,7 +26,6 @@ unzip \
 man-db \
 manpages-dev \
 libtool-bin \
-bison \
 libini-config-dev \
 libssl-dev \
 libffi-dev \
@@ -52,7 +47,7 @@ apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 python3 -m pip install setuptools
 python3 -m pip install ipython
-python3 -m pip install ropgadget
+mv /usr/local/bin/ipython /usr/local/bin/ipython3
 
 pip install \
 python-constraint
@@ -60,8 +55,8 @@ python-constraint
 git clone git://github.com/wting/autojump.git && \
 cd autojump && \
 ./install.py
-echo "[[ -s /home/pu1p/.autojump/etc/profile.d/autojump.sh ]] && source /home/pu1p/.autojump/etc/profile.d/autojump.sh" >> ~/.zshrc
-echo "[[ -s /home/pu1p/.autojump/etc/profile.d/autojump.sh ]] && source /home/pu1p/.autojump/etc/profile.d/autojump.sh" >> ~/.bashrc
+# echo "[[ -s /home/pu1p/.autojump/etc/profile.d/autojump.sh ]] && source /home/pu1p/.autojump/etc/profile.d/autojump.sh" >> ~/.zshrc
+# echo "[[ -s /home/pu1p/.autojump/etc/profile.d/autojump.sh ]] && source /home/pu1p/.autojump/etc/profile.d/autojump.sh" >> ~/.bashrc
 
 apt-get remove docker docker-engine docker.io containerd runc
 
