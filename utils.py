@@ -93,39 +93,41 @@ def publish(exp="./exp.py", out="./public_exp.py"):
     while True:
         try:
             line = lines.pop()
-            if "pwn_framework" in line:
+            if "pf" in line:
                 continue
             if "lambda p" in line:
                 continue
-            if "context" in line:
-                continue
+            # if "context" in line:
+            #     continue
             # if "global io" in line:
             #     continue
-            if "LOCAL = 1" in line:
-                continue
+            # if "LOCAL = 1" in line:
+            #     continue
             if "break_points" in line:
                 continue
-            if "def _get_bstr" in line:
+            if "bps" in line:
+                continue
+            if "def _get_bstr(" in line:
                 while lines.pop().startswith("  "):
                     continue
                 s1 += "\n"
                 continue
-            if "def wait" in line:
+            if "def wait(" in line:
                 while lines.pop().startswith("  "):
                     continue
                 s1 += "\n"
                 continue
-            if "def mydebug" in line:
+            if "def mydebug(" in line:
                 while lines.pop().startswith("  "):
                     continue
                 s1 += "\n"
                 continue
-            if "def pause" in line:
+            if "def pause(" in line:
                 while lines.pop().startswith("  "):
                     continue
                 s1 += "\n"
                 continue
-            if "def sh" in line:
+            if "def sh(" in line:
                 while lines.pop().startswith("  "):
                     continue
                 s1 += "\n"
@@ -138,22 +140,22 @@ def publish(exp="./exp.py", out="./public_exp.py"):
                 or "mydebug(" in line or "sh(" in line:
                 continue
 
-            if "if LOCAL:" in line:
-                s1 += "# local\n"
-                while True:
-                    line = lines.pop()
-                    if line.strip() == "":
-                        continue
-                    if line.startswith("  "):
-                        s1 += "# "+line.strip()+"\n"
-                    elif line.startswith("else:"):
-                        s1 += "# remote\n"
-                    else:
-                        # s1 += "\n"+line
-                        print("append line:"+line)
-                        lines.append(line)
-                        break
-                continue
+            # if "if LOCAL:" in line:
+            #     s1 += "# local\n"
+            #     while True:
+            #         line = lines.pop()
+            #         if line.strip() == "":
+            #             continue
+            #         if line.startswith("  "):
+            #             s1 += "# "+line.strip()+"\n"
+            #         elif line.startswith("else:"):
+            #             s1 += "# remote\n"
+            #         else:
+            #             # s1 += "\n"+line
+            #             print("append line:"+line)
+            #             lines.append(line)
+            #             break
+            #     continue
             if line.strip(" ").startswith("#"):
                 continue
             s1 += line

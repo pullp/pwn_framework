@@ -1,7 +1,7 @@
 #coding:utf-8
 from pwn import *
 import pwn_framework as pf
-import time
+from time import sleep
 import sys
 
 global io
@@ -22,17 +22,16 @@ filename = "FILENAME"
 ip = "HOST"
 port = PORT
 
-LOCAL = 1 if len(sys.argv)==1 else 0
+LOCAL = True if len(sys.argv)==1 else False
 
 global bps # break points
 bps = []
 
+elf = ELF(filename)
 
-elf = ELF("./"+filename)
-
-remote_libc = "./remote_libc"
+remote_libc = "remote_libc"
 if LOCAL:
-    io = process("./"+filename)
+    io = process(filename)
     libc = elf.libc
 
     # # if LD_PRELOAD multiple libs, split with ':'
@@ -42,9 +41,6 @@ else:
     context.log_level = 'debug'
     io = remote(ip, port)
     libc = ELF(remote_libc)
-
-def wait(t=0.3):
-    sleep(t)
 
 def mydebug(s=''):
     def _get_bstr():
@@ -68,9 +64,6 @@ def pause(s = 'pause'):
         raw_input(s)
     else:
         raw_input(s)
-
-def sh(p):
-    p.interactive()   
 
 def lg(name, val):
     log.info(name+" : "+hex(val))
