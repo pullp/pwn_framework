@@ -18,18 +18,20 @@ context(arch = 'ARCH', os = 'linux', endian = 'little')
 context.log_level = 'debug'
 context.terminal = ['tmux', 'splitw', '-h']
 
-filename = "FILENAME"
+filename = "./FILENAME"
 ip = "HOST"
 port = PORT
 
 LOCAL = True if len(sys.argv)==1 else False
 
-global bps # break points
+global bps # Break Points
+global gds # Gdb Debug Symbols
 bps = []
+gds = {}
 
 elf = ELF(filename)
 
-remote_libc = "remote_libc"
+remote_libc = "./remote_libc"
 if LOCAL:
     io = process(filename)
     libc = elf.libc
@@ -42,25 +44,36 @@ else:
     io = remote(ip, port)
     libc = ELF(remote_libc)
 
-def mydebug(s=''):
+def mydebug(p, s=''):
     def _get_bstr():
         global bps
         b_str =""
         for break_point in bps:
-                if type(break_point) == int:
-                    b_str += "b *" + hex(break_point ) + '\n'
-                elif type(break_point) == str:
-                    b_str += "b * %s\n"%(break_point)
-                else:
-                    pause("unsupported break point type : "+str(break_point))
+            if type(break_point) != int:
+                b_str += "b *%s\n"%(hex(break_point))
+            elif type(break_point) == str:
+                b_str += "b %s\n"%(break_point)
+            else:
+                pause("[_get_bstr] unsupported break point type : "+str(break_point))
         return b_str
+    def _get_gds_str():
+        global gds
+        res = ""
+        for name in gds:
+            val = gds[name]
+            if type(name) != str:
+                pause("[_get_gds_str] unsupported name type : "+str(type(name)))
+            if type(val) != int:
+                pause("[_get_gds_str] unsupported val type : "+str(type(val)))
+            res += "set $%s=%d\n"%(name, gds[name])
+        return res
     if not LOCAL:
         return
-    gdb.attach(io, _get_bstr()+s)
+    gdb.attach(p, _get_bstr()+_get_gds_str()+s)
 
-def pause(s = 'pause'):
+def pause(p, s = 'pause'):
     if LOCAL:
-        print('pid: ' + str(io.pid))
+        print('pid: ' + str(p.pid))
         raw_input(s)
     else:
         raw_input(s)
@@ -69,7 +82,7 @@ def lg(name, val):
     log.info(name+" : "+hex(val))
 
 
-pause()
+pause(io)
 
 # std_in_off = libc.symbols['_IO_2_1_stdin_']
 
