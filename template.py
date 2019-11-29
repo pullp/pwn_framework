@@ -49,12 +49,12 @@ def mydebug(p, s=''):
         global bps
         b_str =""
         for break_point in bps:
-            if type(break_point) != int:
+            if type(break_point) == int:
                 b_str += "b *%s\n"%(hex(break_point))
             elif type(break_point) == str:
                 b_str += "b %s\n"%(break_point)
             else:
-                pause("[_get_bstr] unsupported break point type : "+str(break_point))
+                pause(p, "[_get_bstr] unsupported break point type : "+str(break_point))
         return b_str
     def _get_gds_str():
         global gds
@@ -62,9 +62,9 @@ def mydebug(p, s=''):
         for name in gds:
             val = gds[name]
             if type(name) != str:
-                pause("[_get_gds_str] unsupported name type : "+str(type(name)))
+                pause(p, "[_get_gds_str] unsupported name type : "+str(type(name)))
             if type(val) != int:
-                pause("[_get_gds_str] unsupported val type : "+str(type(val)))
+                pause(p, "[_get_gds_str] unsupported val type : "+str(type(val)))
             res += "set $%s=%d\n"%(name, gds[name])
         return res
     if not LOCAL:
@@ -74,9 +74,9 @@ def mydebug(p, s=''):
 def pause(p, s = 'pause'):
     if LOCAL:
         print('pid: ' + str(p.pid))
-        raw_input(s)
+        return raw_input(s)
     else:
-        raw_input(s)
+        return raw_input(s)
 
 def lg(name, val):
     log.info(name+" : "+hex(val))
