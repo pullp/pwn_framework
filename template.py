@@ -12,6 +12,7 @@ sl = lambda p, x : p.sendline(x)
 rv = lambda p, x : p.recv(numb = x)
 sa = lambda p, a,b : p.sendafter(a,b)
 sla = lambda p, a,b : p.sendlineafter(a,b)
+rr = lambda p, t : p.recvrepeat(t)
 
 # amd64 or x86
 context(arch = 'ARCH', os = 'linux', endian = 'little')
