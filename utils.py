@@ -74,11 +74,17 @@ def template(filename, host="", port=0):
 
     if "/" in filename:
         filename = filename.split("/")[-1]
-    tp = tp.replace("ARCH", pwn.ELF(filename).arch)
+    arch = pwn.ELF(filename).arch
+    tp = tp.replace("ARCH", arch)
     tp = tp.replace("FILENAME", filename)
+    host = host.strip()
+    if ":" in host:
+        tmp = host.split(":")
+        host = tmp[0].strip()
+        port = int(tmp[1])
     tp = tp.replace("HOST", host)
     tp = tp.replace("PORT", str(port))
-
+    print("arch : %s, filename : %s, host : %s, port : %d"%(arch, filename, host, port))
     with open("exp.py", "w") as f2:
         f2.write(tp)
 
@@ -106,6 +112,8 @@ def publish(exp="./exp.py", out="./public_exp.py"):
             if "break_points" in line:
                 continue
             if "bps" in line:
+                continue
+            if "gds" in line:
                 continue
             if "def _get_bstr(" in line:
                 while lines.pop().startswith("  "):
