@@ -68,6 +68,9 @@ def change_ld(binary, version, copy=True):
     return pwn.ELF(path)
   
 def template(filename, host="", port=0):
+    if os.path.exists("./exp.py"):
+        if (raw_input("do you want to overwrite exist exp.py ? (yes/no)") != "yes"):
+            return
     tp = ""
     with open("/mnt/hgfs/codes/pwn/pwn_framework/template.py", "r") as f1:
         tp = f1.read()
