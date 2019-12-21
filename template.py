@@ -79,11 +79,16 @@ def pause(p, s = 'pause'):
     else:
         return raw_input(s)
 
+def choice(p, idx):
+    sla(p, XXX, str(idx))
+    
 def lg(name, val):
     log.info(name+" : "+hex(val))
 
 
 pause(io)
+
+io.interactive()
 
 # std_in_off = libc.symbols['_IO_2_1_stdin_']
 
