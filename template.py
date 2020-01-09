@@ -38,7 +38,7 @@ if LOCAL:
     libc = elf.libc
 
     # # if LD_PRELOAD multiple libs, split with ':'
-    # io = process("./" + filename, env={'LD_PRELOAD': remote_libc}) 
+    # io = process(filename, env={'LD_PRELOAD': remote_libc}) 
     # libc = ELF(remote_libc)
 else:
     context.log_level = 'debug'

