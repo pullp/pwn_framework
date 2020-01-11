@@ -154,9 +154,9 @@ def mmap(s):
     def show_prot(prot_int):
         # from glibc-2.23 mman.h
         prots = {"PROT_NONE"	: 0x00,
-            "PROT_READ"	: 0x04,
+            "PROT_READ"	: 0x01,
             "PROT_WRITE"	: 0x02,
-            "PROT_EXEC"	: 0x01
+            "PROT_EXEC"	: 0x04
         } 
         prot_res = ""
         for p in prots:
