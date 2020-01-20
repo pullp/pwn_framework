@@ -1,3 +1,36 @@
+/*
+launch.sh:
+    #!/bin/bash
+    ./qemu-system-x86_64 \
+        -m 1G \
+        -device strng \
+        -hda my-disk.img \
+        -hdb my-seed.img \
+        -nographic \
+        -L pc-bios/ \
+        -enable-kvm \
+        -device e1000,netdev=net0 \
+        -netdev user,id=net0,hostfwd=tcp::5555-:22
+
+generate key pair:
+    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+add public key:
+    cat ./key.pub > ~/.ssh/authorized_keys
+
+use scp to transfer file:
+    scp -P5555 exp ubuntu@127.0.0.1:/home/ubuntu # use private key
+    scp -P5555  -i ./key exp ubuntu@127.0.0.1:/home/ubuntu # use password
+
+login with ssh:
+    ssh ubuntu@127.0.0.1 -p 5555 -i ./key
+
+Makefile template:
+exp:
+	cc -m32 -O0 -static -o exp exp.c
+	scp -P5555  -i ./key exp ubuntu@127.0.0.1:/home/ubuntu
+	rm exp*/
+
 #include <assert.h>
 #include <fcntl.h>
 #include <inttypes.h>
