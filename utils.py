@@ -72,7 +72,7 @@ def template(filename, host="", port=0):
         if (raw_input("do you want to overwrite exist exp.py ? (yes/no)") != "yes"):
             return
     tp = ""
-    with open("/mnt/hgfs/codes/pwn/pwn_framework/template.py", "r") as f1:
+    with open("/mnt/hgfs/codes/pwn/pwn_framework/templates/template.py", "r") as f1:
         tp = f1.read()
 
     if "/" in filename:
@@ -85,15 +85,42 @@ def template(filename, host="", port=0):
         tmp = host.split(":")
         host = tmp[0].strip()
         port = int(tmp[1])
+    if " " in host:
+        tmp = host.split(" ")
+        for i in tmp:
+            if i == "":
+                continue
+            if "." in i:
+                host = tmp[0].strip() 
+            else:
+                port = int(tmp[1])
     tp = tp.replace("HOST", host)
     tp = tp.replace("PORT", str(port))
     print("arch : %s, filename : %s, host : %s, port : %d"%(arch, filename, host, port))
     with open("exp.py", "w") as f2:
         f2.write(tp)
 
+def qemu_pci(mmio_file, pmio_base):
+    """
+    generate exploit template named 'exp.c' at current path, the template is used 
+        for challenges about qemu escape with pci device
+    @param mmio_file: the device file used to read/write pci device's MMIO space,
+        such as /sys/devices/pci0000:00/0000:00:03.0/resource0
+    @param pmio_base: the start address of pci device's PMIO space. you can get
+        the address by cat the resource file.
+    """
+    if os.path.exists("./exp.c"):
+        if (raw_input("do you want to overwrite exist exp.py ? (yes/no)") != "yes"):
+            return
+    tp = ""
+    tp = open("/mnt/hgfs/codes/pwn/pwn_framework/templates/qemu_pci_template.c", "r").read()
+    tp = tp.replace("${MMIO_FILE}", mmio_file)
+    tp = tp.replace("${PMIO_BASE}", str(pmio_base))
+    open("./exp.c", "w").write(tp)
+
 def test():
-    shutil.copy("/mnt/hgfs/codes/pwn/pwn_framework/test.c", "./test.c")
-    shutil.copy("/mnt/hgfs/codes/pwn/pwn_framework/Makefile", "./Makefile")
+    shutil.copy("/mnt/hgfs/codes/pwn/pwn_framework/templates/test.c", "./test.c")
+    shutil.copy("/mnt/hgfs/codes/pwn/pwn_framework/templates/Makefile", "./Makefile")
 
 def publish(exp="./exp.py", out="./public_exp.py"):
     lines = open(exp, "r").readlines()
