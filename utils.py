@@ -115,7 +115,7 @@ def qemu_pci(mmio_file, pmio_base):
     tp = ""
     tp = open("/mnt/hgfs/codes/pwn/pwn_framework/templates/qemu_pci_template.c", "r").read()
     tp = tp.replace("${MMIO_FILE}", mmio_file)
-    tp = tp.replace("${PMIO_BASE}", str(pmio_base))
+    tp = tp.replace("${PMIO_BASE}", hex(pmio_base))
     open("./exp.c", "w").write(tp)
 
 def test():
