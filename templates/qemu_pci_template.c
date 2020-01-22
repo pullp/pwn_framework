@@ -28,8 +28,10 @@ login with ssh:
 Makefile template:
 exp:
 	cc -m32 -O0 -static -o exp exp.c
-	scp -P5555  -i ./key exp ubuntu@127.0.0.1:/home/ubuntu
-	rm exp*/
+	scp -P5555  -i ./key exp ubuntu@127.0.0.1:/home/ubuntu # use scp
+    # find . | cpio -H newc -ov -F ../rootfs.cpio # repack rootfs
+	rm exp
+*/
 
 #include <assert.h>
 #include <fcntl.h>
@@ -42,13 +44,41 @@ exp:
 #include <unistd.h>
 #include<sys/io.h>
 
-#define MMIO_FILE ${MMIO_FILE}
+typedef char * Addr;
+
+#define MMIO_FILE "${MMIO_FILE}"
 #define PMIO_BASE ${PMIO_BASE}
 char* MMIO_BASE;
 
 void die(char* msg){
     perror(msg);
     exit(-1);
+}
+
+// convert virtual address to physical address
+#define PAGE_SHIFT  12
+#define PAGE_SIZE   (1 << PAGE_SHIFT)
+#define PAGE_MASK (PAGE_SIZE - 1)
+#define PFN_PRESENT (1ull << 63)
+#define PFN_PFN     ((1ull << 55) - 1)
+Addr addr_v2p(Addr v_addr){
+    size_t offset;
+    uint64_t pme;
+    Addr p_addr;
+    int fd = open("/proc/self/pagemap", O_RDONLY);
+    if (fd < 0)
+        die("[addr_v2p] open pagemap failed");
+    offset = ((uint64_t) v_addr/PAGE_SIZE)*8;
+    if (lseek(fd, offset, SEEK_SET) == -1)
+        die("[addr_v2p] lseek failed");
+    if (read(fd, &pme, 8) != 8)
+        die("[addr_v2p] read from pagemap failed");
+    close(fd);
+    if (!(pme & PFN_PRESENT))
+        return (Addr)-1;
+    p_addr = (Addr) ((pme & PFN_PFN) << PAGE_SHIFT);
+    p_addr |= (v_addr & PAGE_MASK);
+    return p_addr;
 }
 
 void init_io(){
@@ -60,6 +90,7 @@ void init_io(){
         die("mmap mmio file failed");
     if (iopl(3) != 0)
         die("io permission requeset failed");
+    puts("init success");
 }
 
 uint32_t pmio_read(uint32_t offset){
