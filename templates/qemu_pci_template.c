@@ -44,7 +44,7 @@ exp:
 #include <unistd.h>
 #include<sys/io.h>
 
-typedef char * Addr;
+typedef uint64_t Addr;
 
 #define MMIO_FILE "${MMIO_FILE}"
 #define PMIO_BASE ${PMIO_BASE}
@@ -84,13 +84,32 @@ Addr addr_v2p(Addr v_addr){
 void init_io(){
     int mmio_fd = open(MMIO_FILE, O_RDWR | O_SYNC);
     if (mmio_fd == -1)
-        die("open mmio file error");
+        die("[init_io] open mmio file error");
     MMIO_BASE = mmap(0, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, mmio_fd, 0);
     if (MMIO_BASE == MAP_FAILED)
-        die("mmap mmio file failed");
+        die("[init_io] mmap mmio file failed");
     if (iopl(3) != 0)
-        die("io permission requeset failed");
-    puts("init success");
+        die("[init_io] io permission requeset failed");
+    puts("[init_io] init success");
+}
+
+void init_io2(uint64_t mmio_base, uint64_t size){
+    char *phymem_path = "/dev/mem";
+    if (access(phymem_path, R_OK | W_OK) != 0){
+        system("mknod -m 660 /dev/mem c 1 1");
+        sleep(1);
+        if (access(phymem_path, R_OK | W_OK) != 0)
+            die("[init_io2] 'mknod -m 660 /dev/mem c 1 1' failed");
+    }
+    int phymem_fd = open(phymem_path, O_RDWR | O_SYNC);
+    if (phymem_fd == -1)
+        die("[init_io2] open /dev/mem failed");
+    MMIO_BASE = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, phymem_fd, mmio_base);
+    if (MMIO_BASE == MAP_FAILED)
+        die("[init_io2] mmap /dev/mem failed");
+    if (iopl(3) != 0)
+        die("[init_io2] io permission requeset failed");
+    puts("[init_io2] init success");
 }
 
 uint32_t pmio_read(uint32_t offset){
@@ -118,8 +137,8 @@ cat /root/flag
 */
 
 int main(int argc, char **argv){
-    init_io();
-    
+    // init_io(); // user resource0 to read/write mem
+    // init_io2(0x000a0000, 0x20000); // use /dev/mem to read/write mem
     return 0;
 
 }
