@@ -100,7 +100,7 @@ def template(filename, host="", port=0):
     with open("exp.py", "w") as f2:
         f2.write(tp)
 
-def qemu_pci(mmio_file, pmio_base):
+def qemu_pci(mmio_file="/sys/devices/pci0000:00/0000:00:02.0/resource0", pmio_base=0):
     """
     generate exploit template named 'exp.c' at current path, the template is used 
         for challenges about qemu escape with pci device
