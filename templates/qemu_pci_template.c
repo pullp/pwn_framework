@@ -1,16 +1,16 @@
 /*
 launch.sh:
-    #!/bin/bash
-    ./qemu-system-x86_64 \
-        -m 1G \
-        -device strng \
-        -hda my-disk.img \
-        -hdb my-seed.img \
-        -nographic \
-        -L pc-bios/ \
-        -enable-kvm \
-        -device e1000,netdev=net0 \
-        -netdev user,id=net0,hostfwd=tcp::5555-:22
+#!/bin/bash
+./qemu-system-x86_64 \
+    -m 1G \
+    -device strng \
+    -initrd rootfs.cpio \
+    -kernel bzImage \
+    -nographic \
+    -L pc-bios/ \
+    -enable-kvm \
+    -device e1000,netdev=net0 \
+    -netdev user,id=net0,hostfwd=tcp::5555-:22
 
 generate key pair:
     ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
@@ -46,7 +46,6 @@ exp:
 
 typedef uint64_t Addr;
 
-#define MMIO_FILE "${MMIO_FILE}"
 #define PMIO_BASE ${PMIO_BASE}
 char* MMIO_BASE;
 
@@ -81,35 +80,41 @@ Addr addr_v2p(Addr v_addr){
     return p_addr;
 }
 
-void init_io(){
-    int mmio_fd = open(MMIO_FILE, O_RDWR | O_SYNC);
+char* init_mmio_1(char *path, uint32_t size){
+    char* res;
+    int mmio_fd = open(path, O_RDWR | O_SYNC);
     if (mmio_fd == -1)
-        die("[init_io] open mmio file error");
-    MMIO_BASE = mmap(0, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, mmio_fd, 0);
-    if (MMIO_BASE == MAP_FAILED)
-        die("[init_io] mmap mmio file failed");
-    if (iopl(3) != 0)
-        die("[init_io] io permission requeset failed");
-    puts("[init_io] init success");
+        die("[init_mmio_1] open mmio file error");
+    res = (char*) mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, mmio_fd, 0);
+    if (res == MAP_FAILED)
+        die("[init_mmio_1] mmap mmio file failed");
+    puts("[init_mmio_1] init success");
+    return res;
 }
 
-void init_io2(uint64_t mmio_base, uint64_t size){
+char* init_mmio_2(uint64_t phy_start, uint64_t size){
+    char* res;
     char *phymem_path = "/dev/mem";
     if (access(phymem_path, R_OK | W_OK) != 0){
         system("mknod -m 660 /dev/mem c 1 1");
         sleep(1);
         if (access(phymem_path, R_OK | W_OK) != 0)
-            die("[init_io2] 'mknod -m 660 /dev/mem c 1 1' failed");
+            die("[init_mmio_2] 'mknod -m 660 /dev/mem c 1 1' failed");
     }
     int phymem_fd = open(phymem_path, O_RDWR | O_SYNC);
     if (phymem_fd == -1)
-        die("[init_io2] open /dev/mem failed");
-    MMIO_BASE = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, phymem_fd, mmio_base);
-    if (MMIO_BASE == MAP_FAILED)
-        die("[init_io2] mmap /dev/mem failed");
+        die("[init_mmio_2] open /dev/mem failed");
+    res = (char*) mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, phymem_fd, phy_start);
+    if (res == MAP_FAILED)
+        die("[init_mmio_2] mmap /dev/mem failed");
+    puts("[init_mmio_2] init success");
+    return res;
+}
+
+void init_pmio(){
     if (iopl(3) != 0)
-        die("[init_io2] io permission requeset failed");
-    puts("[init_io2] init success");
+        die("[init_pmio] io permission requeset failed");
+    puts("[init_pmio] init success");
 }
 
 uint32_t pmio_read(uint32_t offset){
@@ -137,8 +142,10 @@ cat /root/flag
 */
 
 int main(int argc, char **argv){
-    // init_io(); // user resource0 to read/write mem
-    // init_io2(0x000a0000, 0x20000); // use /dev/mem to read/write mem
+    // MMIO_BASE = init_mmio_1(${MMIO_FILE}, 0x1000); // mmap /sys/devicex/xxx/xxx/resourceN to read/write
+    // MMIO_BASE = init_mmio_2(0x000a0000, 0x20000); // mmap /dev/mem to read/write
+    init_pmio();
+
     return 0;
 
 }
