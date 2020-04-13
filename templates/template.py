@@ -9,9 +9,9 @@ ru = lambda p, x : p.recvuntil(x)
 sn = lambda p, x : p.send(x)
 rl = lambda p  : p.recvline()
 sl = lambda p, x : p.sendline(x)
-rv = lambda p, x : p.recv(numb = x)
-sa = lambda p, a,b : p.sendafter(a,b)
-sla = lambda p, a,b : p.sendlineafter(a,b)
+rv = lambda p, x=1024 : p.recv(numb = x)
+sa = lambda p, a, b : p.sendafter(a,b)
+sla = lambda p, a, b : p.sendlineafter(a,b)
 rr = lambda p, t : p.recvrepeat(t)
 
 # amd64 or x86
