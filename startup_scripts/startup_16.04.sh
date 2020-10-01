@@ -10,8 +10,7 @@ deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ xenial-backports main restr
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ xenial-security main restricted universe multiverse
 deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ xenial-security main restricted universe multiverse""" > /etc/apt/sources.list
 dpkg --add-architecture i386
-apt-get update && apt-get -y upgrade
-
+apt-get update 
 
 apt-get install -y \
 sudo \
@@ -20,10 +19,6 @@ gcc-multilib \
 g++-multilib \
 gdb \
 gdb-multiarch \
-python-dev \
-python-pip \
-python3-pip \
-default-jdk \
 net-tools \
 nasm \
 cmake \
@@ -48,17 +43,12 @@ man-db \
 manpages-dev \
 libtool-bin \
 bison \
-libini-config-dev \
-libssl-dev \
-libffi-dev \
-libglib2.0-dev \
 libc6:i386 \
 libncurses5:i386 \
 libstdc++6:i386 \
 lib32z1 \
 xinetd \
 curl \
-ipython \
 zsh \
 openssh-server
 
@@ -67,80 +57,36 @@ apt-get -y autoremove
 
 /etc/init.d/ssh restart
 
+# install .tmux
 cd ~ && \
-git clone https://github.com/pullp/.tmux.git && \
+git clone https://github.com/gpakosz/.tmux && \
 ln -s -f .tmux/.tmux.conf && \
 cp .tmux/.tmux.conf.local .
 
+# install ohmyzsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
-
-# git clone https://github.com/pyenv/pyenv.git ~/.pyenv && \
-# echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc && \
-# echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc && \
-# echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc && \
-# echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
-
-python -m pip install \
-pycipher \
-uncompyle \
-ropgadget \
-distorm3 \
-filebytes \
-r2pipe \
-scapy \
-python-constraint
-
-python -m pip install --upgrade pwntools
-
-# python -m pip install docopt
-
-python3 -m pip install setuptools \
-ipython
-
-mv /usr/local/bin/ipython /usr/local/bin/ipython3
-
-# # virtualenvwrapper
-# pip install virtualenvwrapper -i https://pypi.douban.com/simple/
-# source /usr/local/bin/virtualenvwrapper.sh
-# echo "source /usr/local/bin/virtualenvwrapper.sh" >> .bashrc
-# echo "source /usr/local/bin/virtualenvwrapper.sh" >> .zshrc
+# # install ruby first
+# gem install one_gadget
+# gem install seccomp-tools
 
 
-# bash -c 'source /etc/bash_completion.d/virtualenvwrapper && \
-# mkvirtualenv angr && \
-# pip install angr && \
-# deactivate'
-
-
-
-gem install one_gadget
-
-# git clone https://github.com/aquynh/capstone.git /opt/capstone && \
-# cd /opt/capstone && \
-# ./make.sh && \
-# ./make.sh install  && \
-# cd bindings/python && \
-# make install && \
-# make install3
-
-# git clone https://gist.github.com/47e3a5ac99867e7f4e0d.git /opt/binstall && \
-# cd /opt/binstall && \
-# chmod 755 binstall.sh && \
-# ./binstall.sh amd64 && \
-# ./binstall.sh i386
-
-git clone https://github.com/sashs/Ropper.git /opt/ropper && \
-cd /opt/ropper && \
-python3 setup.py install
+# # python 相关建议使用 conda 安装
+# pip install ipython
+# 
+# git clone https://github.com/sashs/Ropper.git /opt/ropper && \
+# cd /opt/ropper && \
+# pip install -r requirements.txt
+# python setup.py install
 
 rm -rf /opt/ropper
 
+# 
 # git clone https://github.com/niklasb/libc-database /opt/libc-database
 
-git clone https://github.com/pwndbg/pwndbg.git /opt/pwndbg && \
-cd /opt/pwndbg && \
-./setup.sh
+# git clone https://github.com/pwndbg/pwndbg.git /opt/pwndbg && \
+# cd /opt/pwndbg && \
+# ./setup.sh
 
 git clone git://github.com/wting/autojump.git && \
 cd autojump && \

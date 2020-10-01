@@ -12,7 +12,9 @@ import pwn_framework.readable_args
 Force to use assigned new ld.so by changing the binary
 """
 def change_ld(binary, version, copy=True):
-    if os.path.exists("/home/pu1p/glibcs"):
+    if os.path.exists("/usr/src/glibc"):
+        GLIBCS_PATH = "/usr/src/glibc"
+    elif os.path.exists("/home/pu1p/glibcs"):
         GLIBCS_PATH = "/home/pu1p/glibcs"
     elif os.path.exists("/var/glibcs"):
         GLIBCS_PATH = "/var/glibcs"
@@ -60,7 +62,7 @@ def change_ld(binary, version, copy=True):
                 pwn.log.failure("Failed to change PT_INTERP from {} to {}".
                 format(data, ld))
                 return None
-            binary.write(addr, ld.ljust(size, '\x00'))
+            binary.write(addr, ld.ljust(size, '\x00').encode())
             break
     binary.save(path)    
     os.chmod(path, 0b111000000) #rwx------
@@ -72,7 +74,7 @@ def template(filename, host="", port=0):
         if (raw_input("do you want to overwrite exist exp.py ? (yes/no)") != "yes"):
             return
     tp = ""
-    with open("/mnt/hgfs/codes/pwn/pwn_framework/templates/template.py", "r") as f1:
+    with open("/mnt/hgfs/codes/pwn/pwn_framework/pwn_framework/templates/template.py", "r") as f1:
         tp = f1.read()
 
     if "/" in filename:
@@ -175,7 +177,7 @@ def publish(exp="./exp.py", out="./public_exp.py"):
                 s1 += line[:line.find("wait(")]+"time.sleep(%s)\n"%(second)
                 continue
             if "_get_bstr(" in line or  "pause(" in line \
-                or "mydebug(" in line or "sh(" in line:
+                or "mydebug(" in line :
                 continue
 
             # if "if LOCAL:" in line:

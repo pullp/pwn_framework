@@ -1,6 +1,6 @@
 <!-- TOC -->
 
-- [1. about pwn_framework](#1-about-pwnframework)
+- [1. about pwn_framework](#1-about-pwn_framework)
 - [2. Install](#2-install)
 - [3. generate exp template](#3-generate-exp-template)
   - [3.1. some notes about the exp template](#31-some-notes-about-the-exp-template)
@@ -9,8 +9,8 @@
     - [3.1.3. gds](#313-gds)
     - [3.1.4. mydebug(io)](#314-mydebugio)
 - [4. change ld of a elf file](#4-change-ld-of-a-elf-file)
-- [5. 一些常见利用方式的模板](#5-%e4%b8%80%e4%ba%9b%e5%b8%b8%e8%a7%81%e5%88%a9%e7%94%a8%e6%96%b9%e5%bc%8f%e7%9a%84%e6%a8%a1%e6%9d%bf)
-- [6. 关于环境配置的一些脚本](#6-%e5%85%b3%e4%ba%8e%e7%8e%af%e5%a2%83%e9%85%8d%e7%bd%ae%e7%9a%84%e4%b8%80%e4%ba%9b%e8%84%9a%e6%9c%ac)
+- [5. 一些常见利用方式的模板](#5-一些常见利用方式的模板)
+- [6. 关于环境配置的一些脚本](#6-关于环境配置的一些脚本)
 
 <!-- /TOC -->
 
@@ -41,8 +41,8 @@ export PYTHONPATH=path/to/parent/dir
 example:
 
 ```bash
-# the project's path is /mnt/hgfs/codes/pwn/pwn_framework
-export PYTHONPATH="/mnt/hgfs/codes/pwn"
+# the project's path is /mnt/hgfs/codes/pwn/pwn_framework/pwn_framework
+export PYTHONPATH="/mnt/hgfs/codes/pwn/pwn_framework"
 ```
 
 *可以把命令添加到 bashrc 中*
@@ -53,9 +53,9 @@ export PYTHONPATH="/mnt/hgfs/codes/pwn"
 
 ```python
 import pwn_framework as pf
-pf.utls.template("file name", "host", port)
-# pf.utls.template("file name", "host:port")
-# pf.utls.template("file name", "host port")
+pf.utils.template("file name", "host", port)
+# pf.utils.template("file name", "host:port")
+# pf.utils.template("file name", "host port")
 ```
 
 然后就可以在当前目录下找到生成的`exp.py` 了
@@ -73,15 +73,16 @@ pf.utils.template("./starbound", "chall.pwnable.tw 10202")
 
 对于pwntools中一些常用的交互函数设置了一些缩写
 
-```
-io.recvuntil(x)         -> ru(io, x)
-io.send(x)              -> sn(io, x)
-io.recvline()           -> rl(io)
-io.sendline(x)          -> sl(io, x)
-io.recv(numb = x)       -> rv(io, x)
-io.sendafter(a,b)       -> sa(io, x)
-io.sendlineafter(a,b)   -> sla(io, x)
-io.recvrepeat(t)        -> rr(io, t)
+```python
+io.recvuntil(x)             -> ru(io, x)
+io.send(x)                  -> sn(io, x)
+io.recvline()               -> rl(io)
+io.sendline(x)              -> sl(io, x)
+io.recv(numb = x)           -> rv(io, x)
+io.sendafter(a,b)           -> sa(io, x)
+io.sendlineafter(a,b)       -> sla(io, x)
+io.recvrepeat(t)            -> rr(io, t)
+io.recvuntil(t, drop=True)  -> rd(io, t)
 ```
 
 ### 3.1.2. bps 

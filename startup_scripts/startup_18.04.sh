@@ -21,9 +21,6 @@ gcc-multilib \
 g++-multilib \
 gdb \
 gdb-multiarch \
-python-dev \
-python-pip \
-python3-pip \
 default-jdk \
 net-tools \
 nasm \
@@ -75,31 +72,22 @@ cp .tmux/.tmux.conf.local .
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
+# python -m pip install \
+# pycipher \
+# uncompyle \
+# ropgadget \
+# distorm3 \
+# filebytes \
+# r2pipe \
+# scapy \
+# python-constraint
 
-# git clone https://github.com/pyenv/pyenv.git ~/.pyenv && \
-# echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc && \
-# echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc && \
-# echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc && \
-# echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
-
-python -m pip install \
-pycipher \
-uncompyle \
-ropgadget \
-distorm3 \
-filebytes \
-r2pipe \
-scapy \
-python-constraint
-
-python -m pip install --upgrade pwntools
+# python -m pip install --upgrade pwntools
 
 # python -m pip install docopt
 
-python3 -m pip install setuptools \
-ipython
+# ipython
 
-mv /usr/local/bin/ipython /usr/local/bin/ipython3
 
 # # virtualenvwrapper
 # pip install virtualenvwrapper -i https://pypi.douban.com/simple/
@@ -133,7 +121,6 @@ gem install one_gadget
 
 git clone https://github.com/sashs/Ropper.git /opt/ropper && \
 cd /opt/ropper && \
-python3 setup.py install
 
 rm -rf /opt/ropper
 
@@ -146,8 +133,8 @@ cd /opt/pwndbg && \
 git clone git://github.com/wting/autojump.git && \
 cd autojump && \
 ./install.py
-echo "[[ -s /home/wxk/.autojump/etc/profile.d/autojump.sh ]] && source /home/wxk/.autojump/etc/profile.d/autojump.sh" >> ~/.zshrc
-echo "[[ -s /home/wxk/.autojump/etc/profile.d/autojump.sh ]] && source /home/wxk/.autojump/etc/profile.d/autojump.sh" >> ~/.bashrc
+# echo "[[ -s /home/wxk/.autojump/etc/profile.d/autojump.sh ]] && source /home/wxk/.autojump/etc/profile.d/autojump.sh" >> ~/.zshrc
+# echo "[[ -s /home/wxk/.autojump/etc/profile.d/autojump.sh ]] && source /home/wxk/.autojump/etc/profile.d/autojump.sh" >> ~/.bashrc
 
 # disable ASLR
 bash -c 'echo "kernel.randomize_va_space = 0" > /etc/sysctl.d/01-disable-aslr.conf'

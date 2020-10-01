@@ -94,7 +94,7 @@ class socket_io(object):
         self.sock.close()
 
     def interactive(self):
-        print 'Switching to interative mode'
+        print( 'Switching to interative mode')
         go = threading.Event()
         def recv_thread():
             while not go.isSet():
@@ -103,13 +103,13 @@ class socket_io(object):
                     sys.stdout.write(cur)
                     sys.stdout.flush()
                 except EOFError:
-                    print 'Got EOF while reading in interactive'
+                    print( 'Got EOF while reading in interactive')
                     break
         t = threading.Thread(target = recv_thread)
         t.setDaemon(True)
         t.start()
         while self.sock:
-            print '$ ',
+            print( '$ ',)
             while True:
                 data = sys.stdin.read(1)
                 self.send(data)
@@ -121,7 +121,7 @@ class remote(socket_io):
         self.sock=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((ip,port))
         
-    
+
 class process:
     def __init__(self, cmd):
         self.pipe = subprocess.Popen(cmd, stdin = subprocess.PIPE, stdout = subprocess.PIPE)
@@ -167,14 +167,14 @@ class process:
                 try:
                     cur = self.recv(1)
                 except EOFError:
-                    print 'Got EOF while reading in interactive'
+                    print( 'Got EOF while reading in interactive')
                     break
         t = threading.Thread(target = recv_thread)
         t.setDaemon(True)
         t.start()
 
     def interactive(self):
-        print 'Switching to interative mode'
+        print( 'Switching to interative mode')
         go = threading.Event()
         def recv_thread():
             while not go.isSet():
@@ -183,13 +183,13 @@ class process:
                     sys.stdout.write(cur)
                     sys.stdout.flush()
                 except EOFError:
-                    print 'Got EOF while reading in interactive'
+                    print( 'Got EOF while reading in interactive')
                     break
         t = threading.Thread(target = recv_thread)
         t.setDaemon(True)
         t.start()
         while self.pipe:
-            print '$ ',
+            print( '$ ',)
             while True:
                 data = sys.stdin.read(1)
                 self.send(data)
