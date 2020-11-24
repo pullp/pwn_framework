@@ -24,7 +24,7 @@ filename = "./FILENAME"
 ip = "HOST"
 port = PORT
 
-LOCAL = True if len(sys.argv)==1 else False
+LOCAL = len(sys.argv)==1
 
 global bps # Break Points
 global gds # Gdb Debug Symbols
@@ -35,15 +35,18 @@ elf = ELF(filename)
 
 remote_libc = "./remote_libc"
 if LOCAL:
-    io = process(filename)
+    io = process(filename, aslr=False)
     libc = elf.libc
 
     # # if LD_PRELOAD multiple libs, split with ':'
-    # io = process(filename, env={'LD_PRELOAD': remote_libc}) 
+    # io = process(filename, env={'LD_PRELOAD': remote_libc}, aslr=False) 
     # libc = ELF(remote_libc)
 else:
-    context.log_level = 'debug'
-    io = remote(ip, port)
+    if len(sys.argv) == 3:
+        io = remote(sys.argv[1], int(sys.argv[2], 10))
+    else:
+        io = remote(ip, port)
+    # libc = elf.libc
     libc = ELF(remote_libc)
 
 def mydebug(p, s=''):
