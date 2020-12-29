@@ -8,6 +8,7 @@
 #include <string.h>
 #include <malloc.h>
 #include <inttypes.h>
+#include <assert.h>
 
 int main(){
 	return 0;
